@@ -13,6 +13,8 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 function App() {
   const [search, setSearch] = useState('')
   const [searchResult, setSearchResult] = useState([]);
+  const [postTitle, setPostTitle] = useState('');
+  const [postBody, setPostBody] = useState('');
   const history = useNavigate();
   const [posts, setPosts] = useState([
     {
@@ -41,6 +43,9 @@ function App() {
     }
   ]) 
 
+  const handleSubmit = ()  => {
+
+  }
   const handleDelete = (id) => {
     const postsList = posts.filter(post=> post.id !== id);
     setPosts(postsList);
@@ -61,7 +66,12 @@ function App() {
         />}/>
         <Route path="/posts" element={<NewPost 
           posts={posts}
-          setPosts={setPosts}        
+          postTitle={postTitle}
+          postBody={postBody}
+          setPostTitle={setPostTitle}
+          setPostBody={setPostBody}
+          setPosts={setPosts} 
+          handleDelete={handleDelete}       
         />}/>
         <Route path="/about" element={<About />}/>
         <Route path="/posts/:id" element={<PostPage 
