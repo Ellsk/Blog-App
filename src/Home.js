@@ -3,9 +3,9 @@ import Feed from './Feed'
 
 const Home = ({ posts }) => {
   return (
-    <main>
+    <main   className='Home'>
         {posts.length ? (
-            <Feed />
+            <Feed posts={posts}/>
         ) : (
           <p style={{ marginTop: "2rem"}}>
             No posts to display
