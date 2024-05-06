@@ -6,21 +6,27 @@ import Missing from "./Missing";
 import Nav from "./Nav";
 import NewPost from "./NewPost";
 import PostPage from "./PostPage";
+import { Routes, Route, useHistory } from "react-router-dom";
 
 
 function App() {
   return (
     <div className="App">
-      <Header />
+      
+      <Header title= "React JS Blog"/>
       <Nav />
-      <Home />
-      <NewPost />
-      <PostPage />
-      <About />
-      <Missing />
-      <Footer />
-    </div>
-  );
-}
+        
+      <Routes>
+        <Route path="/" element={<Home />}/>
+        <Route path="/post" element={<NewPost />}/>
+        <Route path="/about" element={<About />}/>
+        <Route path="/post/:id" element={<PostPage />}/>
+        <Route path="*" element={<Missing />}/>
+      </Routes>
 
+      <Footer />  
+    </div>
+    
+  )
+}
 export default App;
