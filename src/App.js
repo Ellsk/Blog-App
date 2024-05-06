@@ -7,11 +7,13 @@ import Missing from "./Missing";
 import Nav from "./Nav";
 import NewPost from "./NewPost";
 import PostPage from "./PostPage";
-import { Routes, Route, useHistory } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 
 
 function App() {
   const [search, setSearch] = useState('')
+  const [searchResult, setSearchResult] = useState([]);
+  const history = useNavigate();
   const [posts, setPosts] = useState([
     {
       id: 1,
@@ -42,7 +44,7 @@ function App() {
   const handleDelete = (id) => {
     const postsList = posts.filter(post=> post.id !== id);
     setPosts(postsList);
-    
+    history('/');
   }
   return (
     <div className="App">
