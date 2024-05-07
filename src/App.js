@@ -9,6 +9,7 @@ import NewPost from "./NewPost";
 import PostPage from "./PostPage";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { format } from 'date-fns'
+import api from './api/posts'
 
 function App() {
 
@@ -18,33 +19,27 @@ function App() {
   const [searchResult, setSearchResult] = useState([]);
   const [postTitle, setPostTitle] = useState('');
   const [postBody, setPostBody] = useState('');
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      title: "My First Post",
-      datetime: "July 01, 2021 11:17:36 AM",
-      body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis consequatur expedita, assumenda similique non optio! Modi nesciunt excepturi corrupti atque blanditiis quo nobis, non optio quae possimus illum exercitationem ipsa!"
-    },
-    {
-      id: 2,
-      title: "My 2nd Post",
-      datetime: "July 01, 2021 11:17:36 AM",
-      body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis consequatur expedita, assumenda similique non optio! Modi nesciunt excepturi corrupti atque blanditiis quo nobis, non optio quae possimus illum exercitationem ipsa!"
-    },
-    {
-      id: 3,
-      title: "My 3rd Post",
-      datetime: "July 01, 2021 11:17:36 AM",
-      body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis consequatur expedita, assumenda similique non optio! Modi nesciunt excepturi corrupti atque blanditiis quo nobis, non optio quae possimus illum exercitationem ipsa!"
-    },
-    {
-      id: 4,
-      title: "My Fourth Post",
-      datetime: "July 01, 2021 11:17:36 AM",
-      body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis consequatur expedita, assumenda similique non optio! Modi nesciunt excepturi corrupti atque blanditiis quo nobis, non optio quae possimus illum exercitationem ipsa!"
-    }
-  ]) 
+  const [posts, setPosts] = useState([]);
 
+  useEffect(()=>{
+     const fetchPosts = async () => {
+      try {
+        const response = await api.get('/posts');
+        setPosts(response.data);
+       } catch (err) {
+        if(err.response) {
+        // Not in the 200 response range
+        console.log(err.response.data);
+        console.log(err.response.status);
+        console.log(err.response.headers);
+        } else {
+          console.log(`Error:${err.message}`)
+        }
+      }
+     }
+
+     fetchPosts();
+  }, [])
   useEffect(()=> {
     const filteredResults = posts.filter(
       (post)=> ((postBody).toLowerCase()).includes((search).toLowerCase())
@@ -53,21 +48,32 @@ function App() {
       setSearchResult(filteredResults.reverse());
   }, [posts, search])
     
-  const handleSubmit = (e)  => {
+  const handleSubmit = async(e)  => {
     e.preventDefault();
     const id = posts.length ? posts[posts.length - 1].id + 1 : 1;
     const datetime = format(new Date(), 'MMMM dd, yyyy p');
     const newPost = { id, title: postTitle, datetime, body:postBody};
-    const allPost = [...posts, newPost]
+    
+    try {
+    const response = await api.post('/posts', newPost)
+    const allPost = [...posts, response.data]
     setPosts(allPost);
     setPostTitle('');
     setPostBody('');
-    history('/');
+    history('/'); 
+    } catch (err) {
+      console.log(`Error: ${err.message}`)
+    }
   }
-  const handleDelete = (id) => {
-    const postsList = posts.filter(post=> post.id !== id);
-    setPosts(postsList);
-    history('/');
+  const handleDelete = async(id) => {
+    try {
+      await api.delete(`/posts/${id}`)
+      const postsList = posts.filter(post=> post.id !== id);
+      setPosts(postsList);
+      history('/');
+    } catch (err) {
+      console.log(`Error: ${err.message}`)
+    }
   }
   return (
     <div className="App">
