@@ -10,6 +10,7 @@ import PostPage from "./PostPage";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { format } from 'date-fns'
 import api from './api/posts'
+import EditPost from "./EditPost";
 
 function App() {
 
@@ -19,6 +20,8 @@ function App() {
   const [searchResult, setSearchResult] = useState([]);
   const [postTitle, setPostTitle] = useState('');
   const [postBody, setPostBody] = useState('');
+  const [editTitle, setEditTitle] = useState('');
+  const [editBody, setEditBody] = useState('');
   const [posts, setPosts] = useState([]);
 
   useEffect(()=>{
@@ -65,6 +68,21 @@ function App() {
       console.log(`Error: ${err.message}`)
     }
   }
+
+  const handleEdit = async (id) => {
+    const datetime = format(new Date(), 'MMMM dd, yyyy p');
+    const updatedPost = { id, title: editTitle, datetime, body:editBody};
+    try {
+      const response = await api.put(`/posts/${id}`, updatedPost);
+      setPosts(posts.map(post => post.id == id ? {...response.data} : post));
+      setEditTitle('');
+      setEditBody('');
+      history('/');
+    } catch (err) {
+      console.log( `Error: ${err.message}`);
+    }
+  }
+
   const handleDelete = async(id) => {
     try {
       await api.delete(`/posts/${id}`)
@@ -97,6 +115,16 @@ function App() {
             setPostBody={setPostBody}
             handleSubmit={handleSubmit}       
           />}/>
+          <Route path="/edit/:id" element={
+            <EditPost
+              posts={posts}
+              editTitle={editTitle}
+              setEditTitle={setEditTitle}
+              editBody={editBody}
+              setEditBody={setEditBody}
+              handleEdit={handleEdit}
+            />
+          } />
         <Route path="/about" element={<About />}/>
         <Route path="/posts/:id" element={
           <PostPage 
