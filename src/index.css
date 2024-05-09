@@ -211,10 +211,18 @@ body {
   border-radius: 0.25rem;
   padding: 0.5rem;
   font-size: 1rem;
-  background-color: red;
   color: #fff;
+  margin-right: 1rem;
   cursor: pointer;
 }
+
+.deletePost {
+  background-color: red;
+}
+
+ .editPost {
+  background-color: #333 ;
+ }
 
 .statusMsg {
   margin-top: 2rem;
