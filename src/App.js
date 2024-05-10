@@ -96,7 +96,7 @@ function App() {
   return (
     <div className="App">
       
-      <Header title= "React JS Blog"/>
+      <Header title= "My Blog"/>
       <Nav 
         search={search}
         setSearch={setSearch}
