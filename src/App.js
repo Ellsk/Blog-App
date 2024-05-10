@@ -11,10 +11,13 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import { format } from 'date-fns'
 import api from './api/posts'
 import EditPost from "./EditPost";
+import useWindowSize from "./hooks/useWindowSize";
+
 
 function App() {
 
   const history = useNavigate();
+  const { width } = useWindowSize();
 
   const [search, setSearch] = useState('')
   const [searchResult, setSearchResult] = useState([]);
@@ -43,13 +46,14 @@ function App() {
 
      fetchPosts();
   }, [])
+  
   useEffect(()=> {
     const filteredResults = posts.filter(
       (post)=> ((postBody).toLowerCase()).includes((search).toLowerCase())
       || ((post.title).toLowerCase()).includes(search.toLowerCase()));
   
       setSearchResult(filteredResults.reverse());
-  }, [posts, search])
+  }, [posts, search, postBody])
     
   const handleSubmit = async(e)  => {
     e.preventDefault();
@@ -74,7 +78,7 @@ function App() {
     const updatedPost = { id, title: editTitle, datetime, body:editBody};
     try {
       const response = await api.put(`/posts/${id}`, updatedPost);
-      setPosts(posts.map(post => post.id == id ? {...response.data} : post));
+      setPosts(posts.map(post => post.id === id ? {...response.data} : post));
       setEditTitle('');
       setEditBody('');
       history('/');
@@ -96,7 +100,7 @@ function App() {
   return (
     <div className="App">
       
-      <Header title= "My Blog"/>
+      <Header title= "My Blog" width={width}/>
       <Nav 
         search={search}
         setSearch={setSearch}
